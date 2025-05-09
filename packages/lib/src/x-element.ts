@@ -54,7 +54,8 @@ export abstract class XElement extends HTMLElement {
   update() {
     XElement.isUpdating = true
     this.#stateIdx = 0
-    diffAndPatch(this, this.childNodes, this.render())
+    const root = this.shadowRoot || this
+    diffAndPatch(root, root.childNodes, this.render())
     XElement.isUpdating = false
   }
 }

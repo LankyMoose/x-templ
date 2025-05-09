@@ -2,6 +2,7 @@ import "./components/counter"
 import { defineElement, html } from "x-templ"
 
 defineElement("x-app", {
+  shadow: { mode: "open" },
   observedAttributes: ["greeting"],
   render() {
     const onclick = () => {
@@ -9,6 +10,7 @@ defineElement("x-app", {
       const next = current === "Hello" ? "World" : "Hello"
       this.setAttribute("greeting", next)
     }
+
     return html`
       <div class="min-h-screen flex flex-col gap-20 justify-center px-10 py-20">
         <h1
@@ -17,7 +19,8 @@ defineElement("x-app", {
         >
           X-Templ Demo ${this.$attribute("greeting")}
         </h1>
-        <x-counter />
+        <slot name="footer"></slot>
+        ${html`<x-counter />`}
       </div>
     `
   },

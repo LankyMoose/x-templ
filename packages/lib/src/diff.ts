@@ -5,10 +5,11 @@ export function diffAndPatch(
   oldNodes: NodeList,
   newNodes: Node[]
 ) {
-  const maxLength = Math.max(oldNodes.length, newNodes.length)
+  const prev = Array.from(oldNodes)
+  const maxLength = Math.max(prev.length, newNodes.length)
 
   for (let i = 0; i < maxLength; i++) {
-    const oldNode = oldNodes[i]
+    const oldNode = prev[i]
     const newNode = newNodes[i]
 
     if (!oldNode) {
@@ -19,9 +20,9 @@ export function diffAndPatch(
       if (oldNode.nodeType === Node.ELEMENT_NODE) {
         diffAttributes(oldNode as Element, newNode as Element)
         if (XElement.knownElements.has((oldNode as Element).tagName)) {
-          const asKaiokenEl = oldNode as XElement
-          XElement.resetStateCounter(asKaiokenEl)
-          diffAndPatch(oldNode, oldNode.childNodes, asKaiokenEl.render())
+          const asXel = oldNode as XElement
+          XElement.resetStateCounter(asXel)
+          diffAndPatch(oldNode, oldNode.childNodes, asXel.render())
         } else {
           diffAndPatch(
             oldNode,

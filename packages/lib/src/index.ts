@@ -12,6 +12,10 @@ export function defineElement<const T extends string[]>(
     tag,
     class extends XElement {
       static observedAttributes = config.observedAttributes
+      constructor() {
+        super()
+        if (config.shadow) this.attachShadow(config.shadow)
+      }
       $attribute<K extends T[number]>(name: K, fallback?: string) {
         return this.getAttribute(name) || fallback || ""
       }

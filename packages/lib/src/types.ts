@@ -6,6 +6,7 @@ export type InferXElementType<T extends string[]> = XElement & {
 }
 
 export type XElementConfig<T extends string[]> = {
+  shadow?: ShadowRootInit
   observedAttributes?: T
   onAttributeChanged?: (
     this: InferXElementType<T>,
