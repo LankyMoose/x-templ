@@ -2,5 +2,5 @@ import "./global.css"
 import "./app"
 
 document.querySelector("#app")!.innerHTML = `
-  <x-app />
+  <x-app greeting="Hello" />
 `
