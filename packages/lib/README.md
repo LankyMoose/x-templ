@@ -18,12 +18,10 @@ defineWebComponent("x-app", {
   render: function () {
     const toggled = this.$state(false)
     const count = this.$state(0)
-    const greeting = this.$attribute("greeting", "Hello world!")
-
     const increment = () => count.set(count.get() + 1)
 
     return html`
-      <h1 class="text-xl">${greeting}</h1>
+      <h1 class="text-xl">${this.$attribute("greeting")}</h1>
       <button onclick="${() => toggled.set(!toggled.get())}">Toggle</button>
       ${toggled.get()
         ? html`<x-counter onIncrement="${increment}" count="${count.get()}" />`
