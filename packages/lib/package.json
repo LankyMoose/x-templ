@@ -1,6 +1,6 @@
 {
   "name": "x-templ",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "A small library for creating Web Components that are declarative and reactive.",
   "main": "dist/index.js",
   "type": "module",
