@@ -1,14 +1,6 @@
 # x-templ
 
-Development monorepo template for **x-templ**.
-
-Get started by running
-
-```bash
-node setup -p packagename -g mygithubusername -e me@hotmail.com
-# OR
-node setup --package packagename --github mygithubusername --email me@hotmail.com
-```
+Development monorepo for **x-templ**.
 
 ## Structure
 
