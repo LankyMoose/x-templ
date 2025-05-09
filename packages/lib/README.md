@@ -26,21 +26,21 @@ defineWebComponent("x-app", {
       <h1 class="text-xl">${greeting}</h1>
       <button onclick="${() => toggled.set(!toggled.get())}">Toggle</button>
       ${toggled.get()
-        ? html`<x-nested onIncrement="${increment}" count="${count.get()}" />`
+        ? html`<x-counter onIncrement="${increment}" count="${count.get()}" />`
         : ""}
     `
   },
 })
 
-defineWebComponent("x-nested", {
+defineWebComponent("x-counter", {
   observedAttributes: ["count"],
   render: function () {
     const count = this.$attribute("count")
+
     return html`
       <button onclick="${() => this.$emit("increment")}">
         Nested Counter: ${count}
       </button>
-      <x-nested-again />
     `
   },
 })
