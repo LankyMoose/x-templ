@@ -11,9 +11,9 @@
 ```
 
 ```ts
-import { defineWebComponent, html } from "x-templ"
+import { defineElement, html } from "x-templ"
 
-defineWebComponent("x-app", {
+defineElement("x-app", {
   observedAttributes: ["greeting"],
   render: function () {
     const toggled = this.$state(false)
@@ -30,7 +30,7 @@ defineWebComponent("x-app", {
   },
 })
 
-defineWebComponent("x-counter", {
+defineElement("x-counter", {
   observedAttributes: ["count"],
   render: function () {
     const count = this.$attribute("count")
