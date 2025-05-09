@@ -15,7 +15,7 @@ import { defineElement, html } from "x-templ"
 
 defineElement("x-app", {
   observedAttributes: ["greeting"],
-  render: function () {
+  render() {
     const toggled = this.$state(false)
     const count = this.$state(0)
     const increment = () => count.set(count.get() + 1)
@@ -32,7 +32,7 @@ defineElement("x-app", {
 
 defineElement("x-counter", {
   observedAttributes: ["count"],
-  render: function () {
+  render() {
     const count = this.$attribute("count")
 
     return html`
@@ -57,7 +57,7 @@ import { defineElement, html } from "x-templ"
 
 defineElement("x-app", {
   shadow: { mode: "open" },
-  render: function () {
+  render() {
     const count = this.$state(0)
     const increment = () => count.set(count.get() + 1)
 
