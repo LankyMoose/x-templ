@@ -4,7 +4,7 @@
 
 <br />
 
-### Usage
+### General Usage
 
 ```html
 <x-app greeting="Hello world!" />
@@ -39,6 +39,42 @@ defineElement("x-counter", {
       <button onclick="${() => this.$emit("increment")}">
         Nested Counter: ${count}
       </button>
+    `
+  },
+})
+```
+
+### Shadow DOM & `<slot>`
+
+```html
+<x-app>
+  <span slot="greeting">Hello world!</span>
+</x-app>
+```
+
+```ts
+import { defineElement, html } from "x-templ"
+
+defineElement("x-app", {
+  shadow: { mode: "open" },
+  render: function () {
+    const count = this.$state(0)
+    const increment = () => count.set(count.get() + 1)
+
+    return html`
+      <style>
+        :host {
+          display: block;
+        }
+        h1 {
+          color: crimson;
+          cursor: pointer;
+        }
+      </style>
+      <h1 class="text-xl">
+        <slot name="greeting"></slot>
+      </h1>
+      <button onclick="${increment}">Count: ${count.get()}</button>
     `
   },
 })

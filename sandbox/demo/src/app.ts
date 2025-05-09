@@ -2,7 +2,6 @@ import "./components/counter"
 import { defineElement, html } from "x-templ"
 
 defineElement("x-app", {
-  shadow: { mode: "open" },
   observedAttributes: ["greeting"],
   render() {
     const onclick = () => {
@@ -19,7 +18,6 @@ defineElement("x-app", {
         >
           X-Templ Demo ${this.$attribute("greeting")}
         </h1>
-        <slot name="footer"></slot>
         ${html`<x-counter />`}
       </div>
     `
