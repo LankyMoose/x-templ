@@ -17,7 +17,7 @@ defineElement("x-app", {
         >
           X-Templ Demo ${this.$attribute("greeting")}
         </h1>
-        ${html`<x-counter />`}
+        <x-counter />
       </div>
     `
   },
