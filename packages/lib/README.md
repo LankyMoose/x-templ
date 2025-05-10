@@ -11,18 +11,34 @@
 ```
 
 ```ts
-import { defineElement, html } from "x-templ"
+import { defineElement, html, $reactive, $inert } from "x-templ"
 
 defineElement("x-app", {
   observedAttributes: ["greeting"],
+  state: () => ({
+    count: $reactive(0),
+    toggled: $inert(false),
+  }),
   render() {
-    const toggled = this.$state(false)
-    const count = this.$state(0)
-    const increment = () => count.set(count.get() + 1)
+    const { count, toggled } = this.$state()
+    const increment = () => {
+      /**
+       * $reactive values will trigger an update when they change
+       */
+      count.set((prev) => prev + 1)
+    }
+    const toggle = () => {
+      /**
+       * $inert values won't trigger an update when they change,
+       * but you can manually trigger an update with `this.update()`
+       */
+      toggled.value = !toggled.value
+      this.update()
+    }
 
     return html`
-      <h1 class="text-xl">${this.$attribute("greeting")}</h1>
-      <button onclick="${() => toggled.set(!toggled.get())}">Toggle</button>
+      <h1 class="text-xl">${this.getAttribute("greeting")}</h1>
+      <button onclick="${toggle}">Toggle</button>
       ${toggled.get()
         ? html`<x-counter onIncrement="${increment}" count="${count.get()}" />`
         : ""}
@@ -32,12 +48,21 @@ defineElement("x-app", {
 
 defineElement("x-counter", {
   observedAttributes: ["count"],
+  onMounted() {
+    console.log("mounted!", this.getAttribute("count"))
+    return () => console.log("unmounted!")
+  }
+  onAttributeChanged(name, oldValue, newValue) {
+    /**
+     * we automatically update when attributes change,
+     * but you can use this to 'listen' for changes as well
+     */
+    console.log(name, oldValue, newValue)
+  }
   render() {
-    const count = this.$attribute("count")
-
     return html`
       <button onclick="${() => this.$emit("increment")}">
-        Nested Counter: ${count}
+        Nested Counter: ${this.getAttribute("count")}
       </button>
     `
   },
@@ -57,9 +82,10 @@ import { defineElement, html } from "x-templ"
 
 defineElement("x-app", {
   shadow: { mode: "open" },
+  state: () => ({ count: $reactive(0) }),
   render() {
-    const count = this.$state(0)
-    const increment = () => count.set(count.get() + 1)
+    const { count } = this.$state()
+    const increment = () => count.set((prev) => prev + 1)
 
     return html`
       <style>
