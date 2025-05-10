@@ -32,7 +32,7 @@ defineElement("x-app", {
        * $inert values won't trigger an update when they change,
        * but you can manually trigger an update with `this.update()`
        */
-      toggled.value = !toggled.value
+      toggled.current = !toggled.current
       this.update()
     }
 
