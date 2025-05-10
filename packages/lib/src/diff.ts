@@ -20,8 +20,7 @@ export function diffAndPatch(
       if (oldNode.nodeType === Node.ELEMENT_NODE) {
         diffAttributes(oldNode as Element, newNode as Element)
         if (XElement.knownElements.has((oldNode as Element).tagName)) {
-          const asXel = oldNode as XElement
-          XElement.resetStateCounter(asXel)
+          const asXel = oldNode as XElement<any>
           diffAndPatch(oldNode, oldNode.childNodes, asXel.render())
         } else {
           diffAndPatch(

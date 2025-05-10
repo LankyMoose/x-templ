@@ -1,30 +1,30 @@
 import type { XElement } from "./x-element"
 
-export type InferXElementType<T extends string[]> = XElement & {
-  $attribute: <K extends T[number]>(name: K, fallback?: string) => string
-  $emit: (name: string) => void
-}
+export type XElementState = Record<string, Inert<any> | Reactive<any>>
 
-export type XElementConfig<T extends string[]> = {
+export type XElementConfig<
+  Attrs extends string[],
+  State extends XElementState
+> = {
+  state?: () => State
   shadow?: ShadowRootInit
-  observedAttributes?: T
+  observedAttributes?: Attrs
   onAttributeChanged?: (
-    this: InferXElementType<T>,
-    name: T[number],
+    this: XElement<Attrs, State>,
+    name: Attrs[number],
     oldValue: string,
     newValue: string
   ) => void
-  render: (this: InferXElementType<T>) => Node[]
-  onMounted?: XElement["onMounted"]
-  onUnmounted?: XElement["onUnmounted"]
+  render: (this: XElement<Attrs, State>) => Node[]
+  onMounted?: XElement<Attrs, State>["onMounted"]
 }
 
-export type Ref<T> = {
+export type Inert<T> = {
   current: T
 }
 
 export type Reactive<T> = {
   get(): T
-  set(value: T): void
+  set(value: T | ((prev: T) => T)): void
   subscribe(fn: (current: T, prev: T) => void): () => void
 }

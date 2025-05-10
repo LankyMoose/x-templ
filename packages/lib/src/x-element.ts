@@ -1,59 +1,62 @@
 import { diffAndPatch } from "./diff.js"
-import { reactive } from "./reactive.js"
-import type { Ref, Reactive } from "./types"
+import type { XElementConfig, XElementState } from "./types"
 
-export abstract class XElement extends HTMLElement {
+export abstract class XElement<
+  Attrs extends string[],
+  State extends XElementState = {}
+> extends HTMLElement {
   static isUpdating = false
   static knownElements = new Set<string>()
-  static resetStateCounter = (el: XElement) => (el.#stateIdx = 0)
-
-  constructor() {
-    super()
-    XElement.knownElements.add(this.tagName)
-  }
 
   #cleanups: (() => void)[] = []
-  #state: any[] = []
-  #stateIdx = 0
-  #update = this.update.bind(this)
+  #boundUpdate = this.#update.bind(this)
+  #state: State
 
+  constructor(private config: XElementConfig<Attrs, State>) {
+    super()
+    XElement.knownElements.add(this.tagName)
+    const { shadow, state } = config
+    if (shadow) this.attachShadow(shadow)
+    this.#state = state?.() || ({} as State)
+    for (const value of Object.values(this.#state)) {
+      if ("subscribe" in value) {
+        this.#cleanups.push(value.subscribe(this.#boundUpdate))
+      }
+    }
+  }
+
+  onMounted?(this: XElement<Attrs, State>): void | (() => void)
+  onAttributeChanged?(name: string, oldValue: string, newValue: string): void
   abstract render(): Node[]
-  onMounted?(): void
-  onUnmounted?(): void
+
+  $emit(name: string): void {
+    this.dispatchEvent(new CustomEvent(name))
+  }
+
+  $state(): State {
+    return this.#state
+  }
+
+  attributeChangedCallback(name: string, oldValue: string, newValue: string) {
+    if (oldValue === newValue) return
+    if (this.config.observedAttributes?.includes(name)) {
+      this.onAttributeChanged?.(name, oldValue, newValue)
+      if (!XElement.isUpdating) this.#update()
+    }
+  }
 
   connectedCallback() {
-    this.update()
-    this.onMounted?.()
+    this.#update()
+    const cleanup = this.onMounted?.()
+    if (typeof cleanup === "function") this.#cleanups.push(cleanup)
   }
 
   disconnectedCallback() {
     while (this.#cleanups.length) this.#cleanups.pop()!()
-    this.onUnmounted?.()
   }
 
-  $state<T>(initialValue: T): Reactive<T> {
-    const idx = this.#stateIdx++
-    if (this.#state[idx]) return this.#state[idx]
-    const state = (this.#state[idx] = reactive(initialValue))
-    this.#cleanups.push(state.subscribe(this.#update))
-    return state
-  }
-
-  $ref<T>(initialValue: T): Ref<T> {
-    const idx = this.#stateIdx++
-    if (this.#state[idx]) return this.#state[idx]
-    const state = (this.#state[idx] = { current: initialValue })
-    this.#cleanups.push(() => (this.#state[idx] = undefined))
-    return state
-  }
-
-  $emit(name: string) {
-    this.dispatchEvent(new CustomEvent(name))
-  }
-
-  update() {
+  #update() {
     XElement.isUpdating = true
-    this.#stateIdx = 0
     const root = this.shadowRoot || this
     diffAndPatch(root, root.childNodes, this.render())
     XElement.isUpdating = false
